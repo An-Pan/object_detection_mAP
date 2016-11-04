@@ -18,7 +18,11 @@ def get_info(info_file, info_dict):
 			if first_line:
 				first_line = False
 				continue
-			im_id,xmin,ymin,xmax,ymax,score = map(float, line.strip().split(','))
+			if len(line.strip().split(',')) == 6:
+				im_id,xmin,ymin,xmax,ymax,score = map(float, line.strip().split(','))
+			else:
+				im_id,xmin,ymin,xmax,ymax = map(float, line.strip().split(','))
+				score = 1.
 			if not im_id in info_dict:
 				info_dict[im_id] = list()
 			info_dict[im_id].append([xmin,ymin,xmax,ymax,score])
@@ -69,7 +73,7 @@ for item in score_match_list:
 	r.append(float(truth_num)/predict_num)
 mAP = 0
 for i in range(1,len(p)):
-	mAP += p[i]*(r[i-1]-r[i])
+	mAP += (r[i-1]+r[i])/2*(p[i]-p[i-1])
 print('mAP:{}'.format(mAP))
 pl.plot(p,r)
 pl.show()
